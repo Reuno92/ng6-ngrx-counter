@@ -1,5 +1,82 @@
 # Ng6NgRx6Counterx
 
+*My First app with NgRx with Angular 6*
+
+I create a reducer named **counter** for manage state with NgRx and a interface **CounterState** for manage a RxJS Observable.
+
+**Counter.ts**
+```
+import { Action } from '@ngrx/store';
+
+export const INCREMENT = 'INCREMENT';
+export const DECREMENT = 'DECREMENT';
+export const RESET = 'RESET';
+
+export function counterReducer(state: number = 0, action: Action) {
+    switch (action.type) {
+        case INCREMENT:
+            return state + 1;
+        case DECREMENT:
+            return state - 1;
+        case RESET:
+            return 0;
+        default:
+            return state;
+    }
+}
+```
+
+**counterState.ts**
+```
+export interface CounterState {
+    counter: number;
+}
+```
+
+It's store a logic and dispatch in **CounterComponent**'s methods.
+
+```
+import { Component, OnInit } from '@angular/core';
+
+import { CounterState } from '../_models/counterState';
+
+import { Store } from '@ngrx/store';
+import { INCREMENT, DECREMENT, RESET } from '../_reducer/counter';
+import { Observable } from 'rxjs';
+
+@Component({
+  selector: 'mtr-counter',
+  templateUrl: './counter.component.html',
+  styleUrls: ['./counter.component.css']
+})
+export class CounterComponent implements OnInit {
+
+  private counter$: Observable<number>;
+  public displayCounter: number;
+
+  constructor(private store: Store<CounterState>) {
+    this.counter$ = store.select('counter');
+  }
+
+  ngOnInit() {
+    this.counter$.subscribe( data => this.displayCounter = data);
+  }
+
+  increment() {
+    this.store.dispatch({ type: INCREMENT });
+  }
+
+  decrement() {
+    this.store.dispatch({ type: DECREMENT });
+  }
+
+  reset() {
+    this.store.dispatch({ type: RESET });
+  }
+}
+```
+
+# Start
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.4.
 
 ## Development server
